@@ -1,0 +1,123 @@
+---
+- name: Create a private key + a certificate
+  mgit_at.mgssl.certificate:
+    subject:
+      emailAddress: test@test.test
+      CN: dagobert.duck
+      C: DW
+      ST: Disneyland
+      L: Entenhausen
+      O: Dagobert Duck GmbH
+      OU:
+        - Tresor
+        - Money shipment
+    SANs:
+      - DNS:example.com
+      - DNS:www.example.com
+    ca_name: "test"
+    ca_cert_path: "/tmp/ca.crt"
+    fullchain_cert_path: "/tmp/fullchain.crt"
+    private_key_path: "/tmp/my_key.pem"
+    cert_path: "/tmp/cert.pem"
+    enable_cert_creation: True
+    ca:
+      certificate: |
+        -----BEGIN CERTIFICATE-----
+        MIIE+zCCAuOgAwIBAgIUFKdbBAhVHotVMYrbPIjQ3G7/2+AwDQYJKoZIhvcNAQEN
+        BQAwFDESMBAGA1UEAxMJZm9vYmFyIENBMB4XDTE3MDkxMjEyNTUwMFoXDTI3MDkx
+        MDEyNTUwMFowFDESMBAGA1UEAxMJZm9vYmFyIENBMIICIjANBgkqhkiG9w0BAQEF
+        AAOCAg8AMIICCgKCAgEArrzjrmcSffWpHe5PjKzDAGvX8Co2RsuNe4RogVBVk5WR
+        7xffZFTniEAP3kR47fiy6kBy7tPH2bJAMgjRztYJKkDhOCV9fiFRV6RkMXrHGg4q
+        5JT9ZHvihrniJZdKJJsF0gWYFtR4iGFnXk73chxDmg5h9pELHNeXg9/3VHjxr2PP
+        wfSQqa3jrTmjEX3iZrlcAnk9Frxy2hjtEb86vNucAIVtlhtNyybIx9EZpfuGfSPf
+        b0ejivVuF0siF0OMbY5LCUJKgXLqr3ftojAi3IqhjfmZ/6zzNQBL6Z2FR+iJTYl6
+        KjTvpyK5Cj0F+U2IcApsABSDyjeCPVnquVfPxxw7tdGNkOizDCHMoxEp6Yr7DrQq
+        wAOsEzyE+pSnOMNJ7qA0r59VoSYDlO3t0WgO4KtMz5HPVF2m2oDM1a+FBSn2xTsi
+        8U8LZuIhBuc5PCd+nnXK8QPnBwSq963s4Eu6qvPh3HqomkVvqA5C+S7Pt6qdvvbW
+        dORfTDgainLcPYEjFW8ICE1QONCg9eAeGqHI192r8zS7sfzTkaPUmPHknOp6J5bq
+        FGD3Si75wzwaMFHPZCopfZSxYD/293HB7rprUJJUiVKt3yD+88tbyF7k37Km0WnV
+        Yn3aO21q2c+gIAmqoxc87t22+FzSuiH7QRomGJSOJVdbXhPblW4vQFBgWo4UwosC
+        AwEAAaNFMEMwDgYDVR0PAQH/BAQDAgEGMBIGA1UdEwEB/wQIMAYBAf8CAQEwHQYD
+        VR0OBBYEFF8x8h0eSntO6rtQMG8W4vUGT8dcMA0GCSqGSIb3DQEBDQUAA4ICAQCT
+        HsZVAeJ89OJA1GShule5V0WcEhMTKipQjIDYrsixt5QzSNKl0O552gUB3uIt/+hb
+        2Nb7nuiMpEjwnzMV2U/JfKrD0TZ0Bn1Ib6Dvh8dP7tLnt7xRtOvVEwBj9tde5X0W
+        qtBBn6FvnZSwkKOUZwW2y+zENSRiQcxZZvuuBTy6PUL7cxHJU5HeiDklDG5+bZkG
+        RaKqZMJ+aCVmMbpeo27QSeTywG0zGv+GuxvvtVWt/YVSDB0u/7RRIVZauTcxMFs+
+        9FAVa9yGSgglhmLijUatYunBfZDMQVNKpPwQ21Qt/pug4xl5R3tFBM7ltk+kzjNw
+        ujvniL5q/RvQsLvts1rpEwzE9IVH0VpGS/MDoJoOlqr3dsA54qqEnc7k6LB6+kOc
+        oF+ZwynPsJwbqRKmCo7wXeuksqvIkHVfnUytBRYzWUDzjp3DU6EuPR6pc7EYrTqK
+        Ub4WPYZFtGATWv8O7po+ULnM0uBgM9PrmoLnI4Jl3J1h005LU/CZcHnmatLx/RjE
+        diWMN8wCi925N75uHldjznN5gMvhbSDmmpQ88cdJJrKApnXFoyMBy9S56jB9pAKl
+        peCOJJrHxUQkuEC0nRHrgurY1UBP9Qfmf2xkRVQcEmNWuXlRdvBar/+OqqbJ7vTz
+        h4QtkSkssVKSCWujyP8URBp0K5f00AGQ5iOYYnNQ1w==
+        -----END CERTIFICATE-----
+      private_key: |
+        -----BEGIN RSA PRIVATE KEY-----
+        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
+        -----END RSA PRIVATE KEY-----
+
+- name: Get private key info
+  openssl_privatekey_info:
+    path: /tmp/my_key.pem
+  register: priv_key_info
+
+- name: Get certificate info
+  openssl_certificate_info:
+    path: /tmp/cert.pem
+  register: cert_info
+
+- name: show private key info
+  debug:
+    var: priv_key_info
+
+- name: show certificate info
+  debug:
+    var: cert_info

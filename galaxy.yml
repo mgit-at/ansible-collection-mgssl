@@ -1,0 +1,27 @@
+namespace: mgit_at
+name: mgssl
+version: 1.0.0
+readme: README.md
+authors:
+- Patrick Pichler <ppichler@mgit.at>
+- Jonas Reindl <jreindl@mgit.at>
+
+description: The plugin mgssql creates and manages certificate infrastructes in a secure way. You can create CAs, server certificates and client certificates. For more information please referre to the documentation.
+
+license_file: LICENSE
+
+tags:
+  - openssl
+  - certificates
+  - CA
+  - server
+  - client
+  - opensoure
+  - cryptography
+  - secure
+  - mgit
+
+repository: https://github.com/mgit-at/ansible-collection-mgssl
+documentation: https://github.com/mgit-at/ansible-collection-mgssl
+homepage: https://mgit.at
+issues: https://github.com/mgit-at/ansible-collection-mgssl/issues
