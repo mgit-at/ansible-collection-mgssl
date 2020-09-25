@@ -6,7 +6,7 @@ The collection includes following plugins:
 
 - certificate
 
-For details of the usage please referre to [Example Usage](##example-usage)
+For details of the usage please referre to [Example Usage](#example-usage)
 
 ## Table of contents
 
