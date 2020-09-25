@@ -10,15 +10,15 @@ For details of the usage please referre to [Example Usage](#example-usage)
 
 ## Table of contents
 
-1. [Installation](##installation)
-2. [Requirements](##requirements)
-3. [Plugin Options](##plugin-options)
-4. [Dependencies](##dependencies)
-5. [Example Usage](##example-usage)
-   1. [CA Config Example](###ca-config-example)
-6. [Generate a CA](##generate-a-ca)
-7. [License](##license)
-8. [Author Information](##author-information)
+1. [Installation](#installation)
+2. [Requirements](#requirements)
+3. [Plugin Options](#plugin-options)
+4. [Dependencies](#dependencies)
+5. [Example Usage](#example-usage)
+   1. [CA Config Example](#ca-config-example)
+6. [Generate a CA](#generate-a-ca)
+7. [License](#license)
+8. [Author Information](#author-information)
 
 ## Installation
 
@@ -512,4 +512,6 @@ Apache-2.0 License
 
 ## Author Information
 
-This collection was created in 2020 by Patrick Pichler ([@aveexy](https://github.com/aveexy)) and Jonas Reindl ([@ohdearaugustin](https://github.com/ohdearaugustin)) from [Mgit GmbH](https://mgit.at).
+This collection was created in 2020 by Patrick Pichler ([@aveexy](https://github.com/aveexy)) and Jonas Reindl ([@ohdearaugustin](https://github.com/ohdearaugustin)) from [mgit GmbH](https://mgit.at).
+
+Copyright 2020 mgIT GmbH.
