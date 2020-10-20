@@ -47,7 +47,6 @@ jobs:
             ```sh
             ansible-galaxy collection install mgit_at.mgssl
             ```
-            **Currently not working waiting for organisation group**
 
             Install from the Github repositority with:
             ```sh
