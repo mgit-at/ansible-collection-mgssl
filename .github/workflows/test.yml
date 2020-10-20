@@ -1,5 +1,5 @@
 ---
-name: Release and Deploy collection
+name: Test collection
 on: [push, pull_request]
 jobs:
   test:
