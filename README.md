@@ -26,8 +26,6 @@ To install from ansible galaxy:
 
     ansible-galaxy collection install mgit_at.mgssl
 
-**Currently not working as we are waiting for the orgranisation group on ansible galaxy**
-
 To install from github directly:
 
     ansible-galaxy collection install -r requirements.yml -f
@@ -40,6 +38,7 @@ The requirements.yml needs to have the following format and content:
 
 Hint: Replace the version with the version you will need .
 ## Requirements
+### Version 2.0.0
 
 The [Community Crypto Collection](https://galaxy.ansible.com/community/crypto) is needed to use this collection.
 
