@@ -27,23 +27,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install --upgrade ansible==2.9
+          pip install --upgrade ansible==2.10
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-
-      - name: Copy files and directories to source
-        run: |
-          mkdir -p ansible_collections/mgit_at/mgssl
-          cp $files ansible_collections/mgit_at/mgssl
-          cp -rf $directories ansible_collections/mgit_at/mgssl
-        env:
-          files: "README.md LICENSE galaxy.yml"
-          directories: "contrib plugins tests"
-
-      - name: Test Ansible Collection
-        run: |
-          cd ansible_collections/mgit_at/mgssl
-          ansible-test integration
-          cd ../../../
 
       - name: Build Ansible Collection
         run: ansible-galaxy collection build ansible_collections/mgit_at/mgssl --force
@@ -87,6 +72,5 @@ jobs:
           asset_path: mgit_at-mgssl-${{ steps.cversion.outputs.version }}.tar.gz
           asset_name: mgit_at-mgssl-${{ steps.cversion.outputs.version }}.tar.gz
           asset_content_type: application/tar+gzip
-# Deactivate until namespace
-#      - name: Deploy Ansible collection to Galaxy
-#        run: ansible-galaxy collection publish mgit-at-mgssl-${{ steps.cversion.outputs.version }}.tar.gz --api-key ${{ secrets.GALAXY_API_KEY }}
+      - name: Deploy Ansible collection to Galaxy
+        run: ansible-galaxy collection publish mgit-at-mgssl-${{ steps.cversion.outputs.version }}.tar.gz --api-key ${{ secrets.GALAXY_API_KEY }}

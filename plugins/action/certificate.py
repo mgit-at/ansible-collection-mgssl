@@ -17,8 +17,7 @@ from ansible.parsing.yaml.objects import AnsibleMapping
 from ansible.playbook.task import Task
 from ansible.plugins.action import ActionBase
 
-import ansible.module_utils.crypto as crypto_util
-
+import ansible_collections.community.crypto.plugins.module_utils.crypto as crypto_util
 
 class CheckModeChanged(Exception):
     def __init__(self, message=""):
@@ -716,20 +715,18 @@ class ActionModule(ActionBase):
             self._copy_content(nonce, self._local_temp + "/rnd", run_on_ca_host=True, ignore_changed=True)
 
             # Sign nonce
-            sig = self._execute_openssl_module("mgit_at.mgssl.openssl_signature", {
-                'action': 'sign',
-                'private_key': self._var("private_key_path"),
+            sig = self._execute_openssl_module("community.crypto.openssl_signature", {
+                'privatekey_path': self._var("private_key_path"),
                 'path': self._remote_temp + '/rnd',
             }, ignore_changed=True)
 
-            ret = self._execute_openssl_module("mgit_at.mgssl.openssl_signature", {
-                'action': 'verify',
-                'certificate': self._local_temp + "/my_cert.pem",
+            ret = self._execute_openssl_module("community.crypto.openssl_signature_info", {
+                'certificate_path': self._local_temp + "/my_cert.pem",
                 'path': self._local_temp + '/rnd',
                 'signature': sig['signature'],
             }, ignore_changed=True, run_on_ca_host=True, ignore_failed=True)
 
-            if 'failed' in ret and ret['failed']:
+            if ('failed' in ret and ret['failed']) or not ret['valid']:
                 return False
 
         # Verify that the cert is issued by the ca cert
