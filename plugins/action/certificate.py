@@ -17,12 +17,7 @@ from ansible.parsing.yaml.objects import AnsibleMapping
 from ansible.playbook.task import Task
 from ansible.plugins.action import ActionBase
 
-try:
-    import ansible_collections.community.crypto.plugins.module_utils.crypto as crypto_util
-    HAS_CRYPTO_COLLECTION = True
-except ImportError:
-    HAS_CRYPTO_COLLECTION = False
-    CRYPTO_COLLECTION_ERR = traceback.format_exc()
+import ansible_collections.community.crypto.plugins.module_utils.crypto as crypto_util
 
 class CheckModeChanged(Exception):
     def __init__(self, message=""):
@@ -130,8 +125,6 @@ class ActionModule(ActionBase):
     }
 
     def run(self, tmp=None, task_vars=None):
-        if not HAS_CRYPTO_COLLECTION:
-            raise AnsibleError("Communit Crypto Collection not found: \n {0}".format(CRYPTO_COLLECTION_ERR))
         if task_vars is None:
             task_vars = dict()
 
