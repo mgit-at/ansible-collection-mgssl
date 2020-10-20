@@ -41,14 +41,24 @@ The requirements.yml needs to have the following format and content:
 Hint: Replace the version with the version you will need .
 ## Requirements
 
-This plugin is compatible with 2.8 <= ansible <= 2.9. In 2.8 the new openssl module was introducted, which is used by this role.
+The [Community Crypto Collection](https://galaxy.ansible.com/community/crypto) is needed to use this collection.
 
-**Ansible Version 2.10 is not compatible with this module yet. As there are many major changes in it**
+Installation:
+
+    ansible-galaxy collection install community.crypto
+
+**Ansible versions before 2.10.0 are not supported, as the usage of other collections is not working**
 
 The below requirements are needed on the host that executes this module.
 
 - PyOpenSSL >= 0.15 or cryptography >= 1.6
 - OpenSSL binary in $PATH (only on CA Host)
+
+### Version 1.0.0
+This plugin is compatible with 2.8 <= ansible <= 2.9. In 2.8 the new openssl module was introducted, which is used by this role.
+
+**Ansible Version 2.10 is not compatible with this module yet. As there are many major changes in it**
+
 
 ## Plugin Options
 
