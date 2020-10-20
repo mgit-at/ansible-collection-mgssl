@@ -13,7 +13,7 @@ license_file: LICENSE
 tags:
   - openssl
   - certificates
-  - CA
+  - ca
   - server
   - client
   - opensoure
