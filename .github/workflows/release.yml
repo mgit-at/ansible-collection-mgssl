@@ -72,5 +72,6 @@ jobs:
           asset_path: mgit_at-mgssl-${{ steps.cversion.outputs.version }}.tar.gz
           asset_name: mgit_at-mgssl-${{ steps.cversion.outputs.version }}.tar.gz
           asset_content_type: application/tar+gzip
+
       - name: Deploy Ansible collection to Galaxy
-        run: ansible-galaxy collection publish mgit-at-mgssl-${{ steps.cversion.outputs.version }}.tar.gz --api-key ${{ secrets.GALAXY_API_KEY }}
+        run: ansible-galaxy collection publish mgit_at-mgssl-${{ steps.cversion.outputs.version }}.tar.gz --api-key ${{ secrets.GALAXY_API_KEY }}
