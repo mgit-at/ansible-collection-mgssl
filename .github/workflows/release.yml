@@ -31,7 +31,7 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Build Ansible Collection
-        run: ansible-galaxy collection build ansible_collections/mgit_at/mgssl --force
+        run: ansible-galaxy collection build . --force
 
       - name: Create Release
         id: create_release
