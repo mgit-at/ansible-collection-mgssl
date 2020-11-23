@@ -61,7 +61,7 @@ This plugin is compatible with 2.8 <= ansible <= 2.9. In 2.8 the new openssl mod
 
 ## Plugin Options
 
-This section gives an overview off all the plugin options of mgit.mgssl.certificate
+This section gives an overview off all the plugin options of mgit_at.mgssl.certificate
 
     select_crypto_backend:
         description: Determines which crypto backend to use.
@@ -334,7 +334,7 @@ None.
 Minium required options to generate a certificate:
 
     - name: Minimum required options to generate a certificate
-      mgit.mgssl.certificate:
+      mgit_at.mgssl.certificate:
         subject:
           CN: "Example certificate"
         ca:
@@ -352,7 +352,7 @@ Minium required options to generate a certificate:
 To generate the certificate, ca and the fullchain on the host use:
 
     - name: Include CA and fullchain certificates
-      mgit.mgssl.certificate:
+      mgit_at.mgssl.certificate:
         subject:
           CN: "Example certificate"
         ca_config_path: "config.yml"
@@ -366,7 +366,7 @@ To generate the certificate, ca and the fullchain on the host use:
 Use a CA config file to create a certificate:
 
     - name: Use ca config file
-      mgit.mgssl.certificate:
+      mgit_at.mgssl.certificate:
         subject:
           CN: "Example certificate"
         ca_config_path: "config.yml"
@@ -379,7 +379,7 @@ Use a CA config file to create a certificate:
 Use a existing CA to generate a certificate:
 
     - name: Load CA certificate and private key from file
-      mgit.mgssl.certificate:
+      mgit_at.mgssl.certificate:
         subject:
           CN: "Example certificate"
         ca:
@@ -394,7 +394,7 @@ Use a existing CA to generate a certificate:
 Force the task to always generate the certificate:
 
     - name: Force certificate generation
-      mgit.mgssl.certificate:
+      mgit_at.mgssl.certificate:
         subject:
           CN: "Example certificate"
         ca_config_path: "config.yml"
@@ -407,7 +407,7 @@ Force the task to always generate the certificate:
 You can also use the ``profiles`` option to define the certificate profile inline:
 
     - name: Define profile inline
-      mgit.mgssl.certificate:
+      mgit_at.mgssl.certificate:
         subject:
           CN: "Example certificate"
         ca_config_path: "config.yml"
@@ -431,7 +431,7 @@ You can also use the ``profiles`` option to define the certificate profile inlin
 To set a SANs use the ``SANs`` option:
 
     - name: Generate a certificate with SANs
-      mgit.mgssl.certificate:
+      mgit_at.mgssl.certificate:
         subject:
           CN: "Example certificate"
         ca_config_path: "config.yml"
@@ -447,7 +447,7 @@ To set a SANs use the ``SANs`` option:
 To ignore expired certificates you can set the ``assert`` option:
 
     - name: Disable assertions
-      mgit.mgssl.certificate:
+      mgit_at.mgssl.certificate:
         subject:
           CN: "Example certificate"
         ca_config_path: "config.yml"
