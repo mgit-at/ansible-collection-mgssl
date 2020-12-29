@@ -8,16 +8,16 @@ __metaclass__ = type
 import traceback
 from os import urandom
 from base64 import b64encode, b64decode
-from ansible import context
+from ansible import context, constants
 from ansible.errors import AnsibleError, AnsibleModuleError
 from ansible.executor.task_executor import TaskExecutor
 from ansible.inventory.manager import InventoryManager
 from ansible.parsing.dataloader import DataLoader
 from ansible.parsing.yaml.objects import AnsibleMapping
-from ansible.playbook.task import Task
 from ansible.plugins.action import ActionBase
 
 import ansible_collections.community.crypto.plugins.module_utils.crypto as crypto_util
+
 
 class CheckModeChanged(Exception):
     def __init__(self, message=""):
@@ -130,6 +130,9 @@ class ActionModule(ActionBase):
 
         super(ActionModule, self).run(tmp, task_vars)
         del tmp
+
+        self._stategy = getattr(constants, 'DEFAULT_STRATEGY')
+        self._is_mitogen = self._stategy.startswith('mitogen')
 
         self._task_vars = task_vars
         self._check_mode = self._global_var("ansible_check_mode")
@@ -261,7 +264,30 @@ class ActionModule(ActionBase):
                 None
             )
 
+            # Dirty fix for mitogen compatibility
+            # Mitogen somehow puts a task global connection binding object in each connection that gets created
+            # during the lifetime of an task. That usually happens on the beginning of a task, but here, we create
+            # a new task executor within a task and that also creates a new connection for local running tasks.
+            # After execution the connections gets closed, but the close function also closes and removes the parent
+            # tasks binding object. Now all future connections will fail.
+            #
+            # Solution: Overwrite the close method and only call the necessary close methods except the one that closes
+            # the binding object
+            if self._is_mitogen:
+                get_connection_method = executor_result._get_connection
+
+                def get_connection(cvars, templar):
+                    c = get_connection_method(cvars, templar)
+                    c.close = lambda: (c._put_connection(), None)
+                    return c
+
+                executor_result._get_connection = get_connection
+
             ret = executor_result.run()
+
+            # Reset the close method
+            if self._is_mitogen:
+                executor_result._get_connection = get_connection_method
 
         else:
             if self._shared_loader_obj.action_loader.has_plugin(module_name, None):
