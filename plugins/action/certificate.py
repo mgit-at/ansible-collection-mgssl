@@ -638,7 +638,7 @@ class ActionModule(ActionBase):
         if self._remote_temp is not None:
             self._remove_file(self._remote_temp, ignore_changed=True)
 
-        if self._remote_temp is not None:
+        if self._local_temp is not None:
             self._remove_file(self._local_temp, ignore_changed=True)
 
     def _generate_certificate(self):
