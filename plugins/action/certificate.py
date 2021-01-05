@@ -131,8 +131,8 @@ class ActionModule(ActionBase):
         super(ActionModule, self).run(tmp, task_vars)
         del tmp
 
-        self._stategy = getattr(constants, 'DEFAULT_STRATEGY')
-        self._is_mitogen = self._stategy.startswith('mitogen')
+        self._strategy = getattr(constants, 'DEFAULT_STRATEGY')
+        self._is_mitogen = self._strategy.startswith('mitogen')
 
         self._task_vars = task_vars
         self._check_mode = self._global_var("ansible_check_mode")
@@ -266,9 +266,9 @@ class ActionModule(ActionBase):
 
             # Dirty fix for mitogen compatibility
             # Mitogen somehow puts a task global connection binding object in each connection that gets created
-            # during the lifetime of an task. That usually happens on the beginning of a task, but here, we create
+            # during the lifetime of a task. That usually happens on the beginning of a task, but here, we create
             # a new task executor within a task and that also creates a new connection for local running tasks.
-            # After execution the connections gets closed, but the close function also closes and removes the parent
+            # After execution the connections get closed, but the close function also closes and removes the parent
             # tasks binding object. Now all future connections will fail.
             #
             # Solution: Overwrite the close method and only call the necessary close methods except the one that closes
