@@ -132,7 +132,7 @@ class ActionModule(ActionBase):
         del tmp
 
         self._strategy = getattr(constants, 'DEFAULT_STRATEGY')
-        self._is_mitogen = self._startegy.startswith('mitogen')
+        self._is_mitogen = self._strategy.startswith('mitogen')
 
         self._task_vars = task_vars
         self._check_mode = self._global_var("ansible_check_mode")
