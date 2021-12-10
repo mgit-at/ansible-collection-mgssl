@@ -7,6 +7,8 @@ __metaclass__ = type
 
 import traceback
 from os import urandom
+import os.path
+from platform import system
 from base64 import b64encode, b64decode
 from ansible import context, constants
 from ansible.errors import AnsibleError, AnsibleModuleError
@@ -756,12 +758,35 @@ class ActionModule(ActionBase):
                 return False
 
         # Verify that the cert is issued by the ca cert
-        ret = self._execute_command("openssl verify -verbose -CAfile {0} {1}/my_cert.pem".format(
+        openssl_path_prefix = ""
+        if system() == "Darwin":
+            openssl_path_prefix = self._get_macos_openssl_path()
+
+        ret = self._execute_command("{0}openssl verify -verbose -partial_chain -CAfile {1} {2}/my_cert.pem".format(
+            openssl_path_prefix,
             self._ca_var("certificate_path"),
             self._local_temp
         ), run_on_ca_host=True)
 
         return ret['stdout'].rstrip().endswith('OK')
+
+    def _get_macos_openssl_path(self):
+        """Make an educated guess about Homebrew provided OpenSSL@1.1 path for macOS.
+
+        Supports both Intel and Apple Silicon using the homebrew prefix.
+        """
+        homebrew_path = ""
+
+        result =  self._execute_command("brew config", True)
+        if result['rc'] != 0:
+            raise AnsibleError("Could not use homebrew config to determine HOMEBREW_PREFIX. Unable to provide path to OpenSSL and LibreSSL is not supported.")
+
+        for line in result['stdout'].splitlines():
+            if line.startswith("HOMEBREW_PREFIX"):
+                homebrew_path =  line.split(':')[1].strip()
+                break
+
+        return os.path.join(homebrew_path, 'opt/openssl@1.1/bin/')
 
     # noinspection PyTypeChecker
     def _load_ca(self):
