@@ -2,6 +2,15 @@
 
 This plugin helps to generate server and client certificates from an existing CA in a secure manner. The CA Key is never exposed to the remote host. The generation of the certicates happen on the localhost.
 
+## Features
+
+- lives completely in ansible vault
+- no online services required
+- proper CSR generation on client and signing on local admin machine
+- CA keys never leave admin machine
+- support for sub-CA
+- ...
+
 The collection includes following plugins:
 
 - certificate
