@@ -18,7 +18,17 @@ from ansible.parsing.dataloader import DataLoader
 from ansible.parsing.yaml.objects import AnsibleMapping
 from ansible.plugins.action import ActionBase
 
-import ansible_collections.community.crypto.plugins.module_utils.crypto as crypto_util
+try:
+    from ansible_collections.community.crypto.plugins.module_utils.crypto.cryptography_support import NORMALIZE_NAMES, NORMALIZE_NAMES_SHORT
+except ImportError:
+    try:
+        from ansible_collections.community.crypto.plugins.module_utils.crypto import NORMALIZE_NAMES, NORMALIZE_NAMES_SHORT
+    except ImportError:
+        NORMALIZE_NAMES_FOUND = False
+    else:
+        NORMALIZE_NAMES_FOUND = True
+else:
+    NORMALIZE_NAMES_FOUND = True
 
 
 class CheckModeChanged(Exception):
@@ -152,6 +162,7 @@ class ActionModule(ActionBase):
         ret = {}
 
         try:
+            self._precheck()
             self._main()
         except AnsibleModuleError as e:
             ret = e.orig_exc
@@ -367,7 +378,7 @@ class ActionModule(ActionBase):
         new_subject = {}
 
         for k, v in subject.items():
-            new_subject[crypto_util._NORMALIZE_NAMES.get(k)] = v
+            new_subject[NORMALIZE_NAMES.get(k)] = v
 
         return new_subject
 
@@ -497,6 +508,10 @@ class ActionModule(ActionBase):
 
     # =============== Executing Methods ===============
 
+    def _precheck(self):
+        if not NORMALIZE_NAMES_FOUND:
+            raise AnsibleError('NORMALIZE_NAMES not found in either cryptography support or crypto_utils')
+
     def _main(self):
         self._remote_temp = self._create_temp_folder(ignore_changed=True)
         self._local_temp = self._create_temp_folder(run_on_ca_host=True, ignore_changed=True)
@@ -601,7 +616,7 @@ class ActionModule(ActionBase):
             cert_ext_key_usages = []
             if cert_info['extended_key_usage'] is not None:
                 for i in range(0, len(cert_info['extended_key_usage'])):
-                    cert_info['extended_key_usage'][i] = crypto_util._NORMALIZE_NAMES_SHORT.get(
+                    cert_info['extended_key_usage'][i] = NORMALIZE_NAMES_SHORT.get(
                         cert_info['extended_key_usage'][i], cert_info['extended_key_usage'][i]
                     )
 
