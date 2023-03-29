@@ -18,7 +18,7 @@ from ansible.parsing.dataloader import DataLoader
 from ansible.parsing.yaml.objects import AnsibleMapping
 from ansible.plugins.action import ActionBase
 
-import ansible_collections.community.crypto.plugins.module_utils.crypto as crypto_util
+from ansible_collections.community.crypto.plugins.module_utils.crypto import cryptography_support
 
 
 class CheckModeChanged(Exception):
@@ -367,7 +367,7 @@ class ActionModule(ActionBase):
         new_subject = {}
 
         for k, v in subject.items():
-            new_subject[crypto_util._NORMALIZE_NAMES.get(k)] = v
+            new_subject[cryptography_support.NORMALIZE_NAMES.get(k)] = v
 
         return new_subject
 
@@ -601,7 +601,7 @@ class ActionModule(ActionBase):
             cert_ext_key_usages = []
             if cert_info['extended_key_usage'] is not None:
                 for i in range(0, len(cert_info['extended_key_usage'])):
-                    cert_info['extended_key_usage'][i] = crypto_util._NORMALIZE_NAMES_SHORT.get(
+                    cert_info['extended_key_usage'][i] = cryptography_support.NORMALIZE_NAMES_SHORT.get(
                         cert_info['extended_key_usage'][i], cert_info['extended_key_usage'][i]
                     )
 
