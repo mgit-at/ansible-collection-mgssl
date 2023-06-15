@@ -1,6 +1,6 @@
 namespace: mgit_at
 name: mgssl
-version: 2.1.2
+version: 2.1.3
 readme: README.md
 authors:
 - Patrick Pichler <ppichler@mgit.at>
