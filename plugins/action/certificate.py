@@ -266,16 +266,32 @@ class ActionModule(ActionBase):
             task_vars = self._task_vars.copy()
             task_vars.update(self._task.get_variable_manager().get_vars(host=host, task=task))
 
-            executor_result = TaskExecutor(
-                host,
-                task,
-                task_vars,
-                self._play_context,
-                None,
-                self._loader,
-                self._shared_loader_obj,
-                None
-            )
+            try:
+                executor_result = TaskExecutor(
+                    host,
+                    task,
+                    task_vars,
+                    self._play_context,
+                    None,
+                    self._loader,
+                    self._shared_loader_obj,
+                    None,
+                    self._task.get_variable_manager()
+                )
+            except TypeError:
+                try:
+                    executor_result = TaskExecutor(
+                        host,
+                        task,
+                        task_vars,
+                        self._play_context,
+                        None,
+                        self._loader,
+                        self._shared_loader_obj,
+                        None
+                    )
+                except:
+                    raise TypeError("TaskExecutor: Wrong type of object") from None
 
             # Dirty fix for mitogen compatibility
             # Mitogen somehow puts a task global connection binding object in each connection that gets created
