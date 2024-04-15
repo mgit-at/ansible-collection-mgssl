@@ -305,8 +305,8 @@ class ActionModule(ActionBase):
             if self._is_mitogen:
                 get_connection_method = executor_result._get_connection
 
-                def get_connection(cvars, templar):
-                    c = get_connection_method(cvars, templar)
+                def get_connection(cvars, templar, current_connection):
+                    c = get_connection_method(cvars, templar, current_connection)
                     c.close = lambda: (c._put_connection(), None)
                     return c
 
