@@ -105,19 +105,19 @@
         -----END RSA PRIVATE KEY-----
 
 - name: Get private key info
-  openssl_privatekey_info:
+  community.crypto.openssl_privatekey_info:
     path: /tmp/my_key.pem
   register: priv_key_info
 
 - name: Get certificate info
-  openssl_certificate_info:
+  community.crypto.openssl_certificate_info:
     path: /tmp/cert.pem
   register: cert_info
 
 - name: show private key info
-  debug:
+  ansible.builtin.debug:
     var: priv_key_info
 
 - name: show certificate info
-  debug:
+  ansible.builtin.debug:
     var: cert_info
