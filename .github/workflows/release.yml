@@ -11,8 +11,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run ansible-test
-        uses: ./.github/workflows/ansible-test.yml
+      - name: Perform integration for build
+        uses: ansible-community/ansible-test-gh-action@release/v1
+        with:
+          ansible-core-version: stable-2.17
+          target-python-version: "3.10"
+          testing-type: integration
+          test-deps: >-
+            ansible.netcommon
+            community.crypto
+          pull-request-change-detection: false
+
+      - name: Build collection
+        run: ansible-galaxy collection build ansible_collections/mgit_at/mgssl/ --force
 
       - name: Get current version
         id: cversion
