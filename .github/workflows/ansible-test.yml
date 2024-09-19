@@ -167,7 +167,7 @@ jobs:
         with:
           ansible-core-version: ${{ matrix.ansible }}
           # OPTIONAL command to run before invoking `ansible-test integration`
-          # pre-test-cmd:
+          pre-test-cmd: pip install cryptography
           target-python-version: ${{ matrix.python }}
           testing-type: integration
           # OPTIONAL If your integration tests require code
