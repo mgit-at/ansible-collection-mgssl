@@ -802,7 +802,7 @@ class ActionModule(ActionBase):
         return ret['stdout'].rstrip().endswith('OK')
 
     def _get_macos_openssl_path(self):
-        """Make an educated guess about Homebrew provided OpenSSL@1.1 path for macOS.
+        """Make an educated guess about Homebrew-provided OpenSSL path for macOS.
 
         Supports both Intel and Apple Silicon using the homebrew prefix.
         """
@@ -817,7 +817,7 @@ class ActionModule(ActionBase):
                 homebrew_path = line.split(':')[1].strip()
                 break
 
-        return os.path.join(homebrew_path, 'opt/openssl@1.1/bin/')
+        return os.path.join(homebrew_path, 'bin/')
 
     # noinspection PyTypeChecker
     def _load_ca(self):
