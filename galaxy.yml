@@ -1,10 +1,10 @@
 namespace: mgit_at
 name: mgssl
-version: 2.1.4
+version: 2.1.5
 readme: README.md
 authors:
-- Patrick Pichler <ppichler@mgit.at>
-- Jonas Reindl <jreindl@mgit.at>
+  - Patrick Pichler <ppichler@mgit.at>
+  - Jonas Reindl <jreindl@mgit.at>
 
 description: The plugin mgssql creates and manages certificate infrastructes in a secure way. You can create CAs, server certificates and client certificates. For more information please referre to the documentation.
 
