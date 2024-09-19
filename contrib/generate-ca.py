@@ -226,7 +226,7 @@ class CaGenerator:
             if self.output != "-" and os.path.isfile(self.output):
                 print_error("File {0} already exists".format(self.output))
                 return 1
-            
+
             ca = self.gen_ca_cert()
             ca["profiles"] = self.generate_profiles()
 
@@ -237,7 +237,7 @@ class CaGenerator:
                 print("***** ansible-vault *****")
 
                 cmd = ["ansible-vault", "encrypt", "--output", "-"]
-                
+
                 if isinstance(self.vault_id, str):
                     cmd.append("--vault-id")
                     cmd.append(self.vault_id)
@@ -249,11 +249,11 @@ class CaGenerator:
                 ret = p.wait()
                 p.stdout.close()
                 print("***** ansible-vault *****")
-                
+
                 if ret:
                     raise GeneratorError("ansible-vault returned: %d" % ret)
                 print_info("ansible-vault returned: OK\n")
-                
+
             else:
                 data = data.decode("utf-8")
 

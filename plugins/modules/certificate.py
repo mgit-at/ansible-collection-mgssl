@@ -22,6 +22,7 @@ requirements:
     - OpenSSL binary in $PATH (only on C(ca_host))
 author:
     - Patrick Pichler (@aveexy)
+    - Jonas Reindl (@ohdearaugustin)
 options:
     select_crypto_backend:
         description: Determines which crypto backend to use.
@@ -82,7 +83,7 @@ options:
     private_key_length:
         description: private key length
         type: str
-        default: 4096
+        default: "4096"
 
     private_key_type:
         description: Remote private key type
@@ -126,6 +127,7 @@ options:
             signature_algorithm:
                 description: Allowed signature algorithms
                 type: list
+                elements: str
                 default: [ sha256WithRSAEncryption, sha384WithRSAEncryption, sha512WithRSAEncryption,
                          sha256WithECDSAEncryption, sha384WithECDSAEncryption, sha512WithECDSAEncryption ]
             subject:
@@ -196,7 +198,6 @@ options:
         description: Select profile in profiles list
         type: str
         required: true
-        default: _default
 
     profiles:
         description:
@@ -221,6 +222,7 @@ options:
                     - "Possible options:"
                     - digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
                     - keyAgreement, keyCertSign, cRLSign, encipherOnly, decipherOnly
+                elements: str
                 type: list
 
             key_usage_critical:
@@ -229,6 +231,7 @@ options:
 
             extended_key_usage:
                 description: Certificate extended key usages
+                elements: str
                 type: list
 
             extended_key_usage_critical:
@@ -282,6 +285,7 @@ options:
             - List of SANs
             - "Values must be prefixed with type name 'TYPE:value'. Example 'DNS:example.com'"
             - "Valid types: DNS, IP, email, URI"
+        elements: str
         type: list
 
 '''
