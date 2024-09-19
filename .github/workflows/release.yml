@@ -7,33 +7,16 @@ jobs:
   releaseanddeploy:
     runs-on: ubuntu-latest
     if: github.repository == 'mgit-at/ansible-collection-mgssl'
-    strategy:
-      matrix:
-        python-version: [3.8]
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: My first step
-        uses: ./.github/workflows/ansible-test
+
+      - name: Run ansible-test
+        uses: ./.github/workflows/ansible-test.yml@main
 
       - name: Get current version
         id: cversion
         run: echo "::set-output name=version::$(grep version galaxy.yml | cut -f 2 -d ' ')"
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install --upgrade ansible==2.10
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-
-      - name: Build Ansible Collection
-        run: ansible-galaxy collection build . --force
 
       - name: Create Release
         id: create_release
