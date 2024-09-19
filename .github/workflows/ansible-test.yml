@@ -194,7 +194,7 @@ jobs:
             community.crypto
           pull-request-change-detection: false
       - name: Build collection
-        run: ansible-galaxy collection build ansible-collection-roles/ansible-collection-roles/ansible_collections/mgit_at/mgssl --force
+        run: ansible-galaxy collection build ansible_collections/mgit_at/mgssl/ --force
 
   check: # This job does nothing and is only used for the branch protection
     # or multi-stage CI jobs, like making sure that all tests pass before
