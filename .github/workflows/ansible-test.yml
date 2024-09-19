@@ -143,16 +143,12 @@ jobs:
           # consider dropping testing against EOL versions and versions you don't support.
           # ansible-core 2.16
           - ansible: stable-2.16
-            python: "3.8"
-          - ansible: stable-2.16
             python: "3.10"
           - ansible: stable-2.16
             python: "3.11"
           - ansible: stable-2.16
             python: "3.12"
           # ansible-core 2.17
-          - ansible: stable-2.17
-            python: "3.8"
           - ansible: stable-2.17
             python: "3.10"
           - ansible: stable-2.17
@@ -191,7 +187,7 @@ jobs:
         uses: ansible-community/ansible-test-gh-action@release/v1
         with:
           ansible-core-version: stable-2.17
-          target-python-version: 3.10
+          target-python-version: "3.10"
           testing-type: integration
           test-deps: >-
             ansible.netcommon
