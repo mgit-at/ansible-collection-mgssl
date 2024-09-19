@@ -12,7 +12,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run ansible-test
-        uses: ./.github/workflows/ansible-test.yml@main
+        uses: ./.github/workflows/ansible-test.yml
 
       - name: Get current version
         id: cversion
