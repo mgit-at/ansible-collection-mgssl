@@ -37,7 +37,9 @@ The requirements.yml needs to have the following format and content:
         - https://github.com/mgit-at/ansible-collection-mgssl/releases/download/v<version>/mgit_at-mgssl-<version>.tar.gz
 
 Hint: Replace the version with the version you will need .
+
 ## Requirements
+
 ### Version 2.0.0
 
 The [Community Crypto Collection](https://galaxy.ansible.com/community/crypto) is needed to use this collection.
@@ -54,10 +56,10 @@ The below requirements are needed on the host that executes this module.
 - OpenSSL binary in $PATH (only on CA Host)
 
 ### Version 1.0.0
+
 This plugin is compatible with 2.8 <= ansible <= 2.9. In 2.8 the new openssl module was introducted, which is used by this role.
 
 **Ansible Version 2.10 is not compatible with this module yet. As there are many major changes in it**
-
 
 ## Plugin Options
 
@@ -324,7 +326,6 @@ This section gives an overview off all the plugin options of mgit_at.mgssl.certi
             - "Valid types: DNS, IP, email, URI"
         type: list
 
-
 ## Dependencies
 
 None.
@@ -375,7 +376,6 @@ Use a CA config file to create a certificate:
         cert_path: "/cert.pem"
         enable_cert_creation: True
 
-
 Use a existing CA to generate a certificate:
 
     - name: Load CA certificate and private key from file
@@ -404,7 +404,7 @@ Force the task to always generate the certificate:
         enable_cert_creation: True
         force: True
 
-You can also use the ``profiles`` option to define the certificate profile inline:
+You can also use the `profiles` option to define the certificate profile inline:
 
     - name: Define profile inline
       mgit_at.mgssl.certificate:
@@ -428,7 +428,7 @@ You can also use the ``profiles`` option to define the certificate profile inlin
             extended_key_usage_critical: True
             san_critical: False
 
-To set a SANs use the ``SANs`` option:
+To set a SANs use the `SANs` option:
 
     - name: Generate a certificate with SANs
       mgit_at.mgssl.certificate:
@@ -444,7 +444,7 @@ To set a SANs use the ``SANs`` option:
           - "DNS:www.example.com"
           - "IP:127.0.0.1"
 
-To ignore expired certificates you can set the ``assert`` option:
+To ignore expired certificates you can set the `assert` option:
 
     - name: Disable assertions
       mgit_at.mgssl.certificate:
@@ -508,12 +508,11 @@ This file show an example CA config. Note that the CA Key is also included. To b
 
 ## Generate a CA
 
-The contrib folder includes a the python script ``generate-ca.py``. This file can be used to generate a CA.
+The contrib folder includes a the python script `generate-ca.py`. This file can be used to generate a CA.
 
     usage: generate-ca.py [-h] --output OUTPUT [--ansible-vault [VAULT_ID]] [--expiry EXPIRY] [--path-len PATH-LEN] [--key-size KEY-SIZE] --common-name COMMON-NAME [--country COUNTRY]
                       [--state-or-province STATE-OR-PROVINCE] [--locality LOCALITY] [--organization ORGANIZATION] [--organizational-unit ORGANIZATIONAL-UNIT]
                       [--default-expiry DEFAULT-EXPIRY]
-
 
 ## License
 
