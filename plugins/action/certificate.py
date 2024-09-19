@@ -290,7 +290,7 @@ class ActionModule(ActionBase):
                         self._shared_loader_obj,
                         None
                     )
-                except:
+                except Exception:
                     raise TypeError("TaskExecutor: Wrong type of object") from None
 
             # Dirty fix for mitogen compatibility
@@ -808,13 +808,13 @@ class ActionModule(ActionBase):
         """
         homebrew_path = ""
 
-        result =  self._execute_command("brew config", True)
+        result = self._execute_command("brew config", True)
         if result['rc'] != 0:
             raise AnsibleError("Could not use homebrew config to determine HOMEBREW_PREFIX. Unable to provide path to OpenSSL and LibreSSL is not supported.")
 
         for line in result['stdout'].splitlines():
             if line.startswith("HOMEBREW_PREFIX"):
-                homebrew_path =  line.split(':')[1].strip()
+                homebrew_path = line.split(':')[1].strip()
                 break
 
         return os.path.join(homebrew_path, 'opt/openssl@1.1/bin/')
