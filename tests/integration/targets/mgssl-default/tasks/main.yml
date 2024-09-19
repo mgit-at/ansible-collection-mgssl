@@ -110,7 +110,7 @@
   register: priv_key_info
 
 - name: Get certificate info
-  community.crypto.openssl_certificate_info:
+  community.crypto.x509_certificate_info:
     path: /tmp/cert.pem
   register: cert_info
 
