@@ -129,9 +129,7 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ${{ contains(fromJson(
-            '["stable-2.9", "stable-2.10", "stable-2.11"]'
-            ), matrix.ansible) && 'ubuntu-20.04' || 'ubuntu-latest' }}
+          - ubuntu-latest
           - macos-latest
         ansible:
           - devel
