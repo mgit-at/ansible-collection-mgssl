@@ -48,10 +48,14 @@ Installation:
 
     ansible-galaxy collection install community.crypto
 
-**Ansible versions before 2.10.0 are not supported, as the usage of other collections is not working**
+**Supported ansible-core versions: 2.17.x through 2.19.x (and newer)**
+
+Note: ansible-core versions before 2.10.0 are not supported, as the usage of other collections is not working.
 
 The below requirements are needed on the host that executes this module.
 
+- Python >= 3.11 (for control node with ansible-core >= 2.18)
+- Python >= 3.10 (for control node with ansible-core 2.17)
 - PyOpenSSL >= 0.15 or cryptography >= 1.6
 - OpenSSL binary in $PATH (only on CA Host)
 
