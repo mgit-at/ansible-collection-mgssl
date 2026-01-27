@@ -19,12 +19,18 @@ from ansible.parsing.yaml.objects import AnsibleMapping
 from ansible.plugins.action import ActionBase
 
 try:
-    from ansible_collections.community.crypto.plugins.module_utils.crypto.cryptography_support import NORMALIZE_NAMES, NORMALIZE_NAMES_SHORT
+    # This was refactor for the crypto collections newer 3.0.0
+    from ansible_collections.community.crypto.plugins.module_utils._crypto._objects import NORMALIZE_NAMES, NORMALIZE_NAMES_SHORT
 except ImportError:
     try:
-        from ansible_collections.community.crypto.plugins.module_utils.crypto import NORMALIZE_NAMES, NORMALIZE_NAMES_SHORT
+        from ansible_collections.community.crypto.plugins.module_utils.crypto.cryptography_support import NORMALIZE_NAMES, NORMALIZE_NAMES_SHORT
     except ImportError:
-        NORMALIZE_NAMES_FOUND = False
+        try:
+            from ansible_collections.community.crypto.plugins.module_utils.crypto import NORMALIZE_NAMES, NORMALIZE_NAMES_SHORT
+        except ImportError:
+            NORMALIZE_NAMES_FOUND = False
+        else:
+            NORMALIZE_NAMES_FOUND = True
     else:
         NORMALIZE_NAMES_FOUND = True
 else:
