@@ -36,7 +36,7 @@ jobs:
           - stable-2.17
           - stable-2.18
           - stable-2.19
-          - devel
+          # - devel
     runs-on: >-
       ${{ contains(fromJson(
           '["stable-2.9", "stable-2.10", "stable-2.11"]'
@@ -133,7 +133,8 @@ jobs:
       fail-fast: false
       matrix:
         ansible:
-          - devel
+          - stable-2.19
+          # - devel
         # - milestone
         python:
           - "3.11"
@@ -153,11 +154,6 @@ jobs:
           - ansible: stable-2.18
             python: "3.11"
           - ansible: stable-2.18
-            python: "3.12"
-          # ansible-core 2.19
-          - ansible: stable-2.19
-            python: "3.11"
-          - ansible: stable-2.19
             python: "3.12"
 
     steps:
