@@ -5,6 +5,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+import inspect
 import traceback
 from os import urandom
 import os.path
@@ -272,8 +273,22 @@ class ActionModule(ActionBase):
             task_vars = self._task_vars.copy()
             task_vars.update(self._task.get_variable_manager().get_vars(host=host, task=task))
 
-            try:
-                # Try new signature first (ansible-core 2.18+)
+            sig = inspect.signature(TaskExecutor.__init__)
+            params = list(sig.parameters.keys())
+
+            # Signature 1: ansible-core 2.19+
+            sig_new = ['self', 'host', 'task', 'job_vars', 'play_context', 'loader',
+                       'shared_loader_obj', 'final_q', 'variable_manager']
+
+            # Signature 2: ansible-core 2.16-2.18
+            sig_old = ['self', 'host', 'task', 'job_vars', 'play_context', 'new_stdin',
+                       'loader', 'shared_loader_obj', 'final_q', 'variable_manager']
+
+            # Signature 3: ansible-core 2.9-2.15
+            sig_oldest = ['self', 'host', 'task', 'job_vars', 'play_context', 'new_stdin',
+                          'loader', 'shared_loader_obj', 'final_q']
+
+            if params == sig_new:
                 executor_result = TaskExecutor(
                     host,
                     task,
@@ -284,35 +299,34 @@ class ActionModule(ActionBase):
                     None,
                     self._task.get_variable_manager()
                 )
-            except TypeError:
-                try:
-                    # Fall back to old signature (ansible-core < 2.18)
-                    executor_result = TaskExecutor(
-                        host,
-                        task,
-                        task_vars,
-                        self._play_context,
-                        None,  # new_stdin (deprecated)
-                        self._loader,
-                        self._shared_loader_obj,
-                        None,  # rslt_q
-                        self._task.get_variable_manager()
-                    )
-                except TypeError:
-                    # Even older signature without variable_manager
-                    try:
-                        executor_result = TaskExecutor(
-                            host,
-                            task,
-                            task_vars,
-                            self._play_context,
-                            None,
-                            self._loader,
-                            self._shared_loader_obj,
-                            None
-                        )
-                    except Exception:
-                        raise TypeError("TaskExecutor: Wrong type of object") from None
+            elif params == sig_old:
+                executor_result = TaskExecutor(
+                    host,
+                    task,
+                    task_vars,
+                    self._play_context,
+                    None,
+                    self._loader,
+                    self._shared_loader_obj,
+                    None,
+                    self._task.get_variable_manager()
+                )
+            elif params == sig_oldest:
+                executor_result = TaskExecutor(
+                    host,
+                    task,
+                    task_vars,
+                    self._play_context,
+                    None,
+                    self._loader,
+                    self._shared_loader_obj,
+                    None
+                )
+            else:
+                raise AnsibleError(
+                    "Unsupported TaskExecutor signature. Expected one of three known signatures, "
+                    "got: {0}. This may indicate an incompatible ansible-core version.".format(params)
+                )
 
             # Dirty fix for mitogen compatibility
             # Mitogen somehow puts a task global connection binding object in each connection that gets created
