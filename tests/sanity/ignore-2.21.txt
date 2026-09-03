@@ -1,0 +1,1 @@
+contrib/generate-ca.py shebang # See https://github.com/ansible/ansible/issues/76612

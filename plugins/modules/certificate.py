@@ -90,9 +90,15 @@ options:
         type: str
         default: RSA
 
+    private_key_curve:
+        description:
+            - Passed through to community.crypto.openssl_privatekey as C(curve)
+            - Only sent when set, and only relevant for elliptic curve key types
+        type: str
+
     cert_mode:
-        description: Remote certificate file mode
-        default: 0o600
+        description: Remote certificate file mode, also applied to ca_cert_path and fullchain_cert_path
+        default: 0o644
 
     private_key_mode:
         description: Private key file mode
@@ -129,7 +135,7 @@ options:
                 type: list
                 elements: str
                 default: [ sha256WithRSAEncryption, sha384WithRSAEncryption, sha512WithRSAEncryption,
-                         sha256WithECDSAEncryption, sha384WithECDSAEncryption, sha512WithECDSAEncryption ]
+                         ecdsa-with-SHA256, ecdsa-with-SHA384, ecdsa-with-SHA512 ]
             subject:
                 description: Enable/disable subject assertion
                 type: bool
@@ -194,10 +200,17 @@ options:
                 type: bool
                 default: True
 
+            remote_private_key:
+                description:
+                    - Enable/disable the check that the private key on the remote host belongs to the certificate
+                    - Verified by signing a nonce on the remote host and validating the signature against the certificate
+                type: bool
+                default: True
+
     profile:
         description: Select profile in profiles list
         type: str
-        required: true
+        default: _default
 
     profiles:
         description:
@@ -241,7 +254,15 @@ options:
             san_critical:
                 description: Certificate san critical flag
                 type: bool
-        default: _default
+        default:
+            _default:
+                expiry: "+43800h"
+                valid_at: "+720h"
+                key_usage: []
+                key_usage_critical: False
+                extended_key_usage: []
+                extended_key_usage_critical: False
+                san_critical: False
 
     subject:
         description: Subject of certificate

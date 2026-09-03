@@ -14,8 +14,8 @@ jobs:
       - name: Perform integration for build
         uses: ansible-community/ansible-test-gh-action@release/v1
         with:
-          ansible-core-version: stable-2.19
-          target-python-version: "3.11"
+          ansible-core-version: stable-2.21
+          target-python-version: "3.12"
           testing-type: integration
           test-deps: >-
             ansible.netcommon
