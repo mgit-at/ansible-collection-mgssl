@@ -280,19 +280,19 @@ class ActionModule(ActionBase):
             # `task` and `job_vars` moved out of the constructor into the TaskContext,
             # and run() returns a UnifiedTaskResult instead of a plain result dict.
             sig_2_21 = ['self', 'host', 'play_context', 'loader', 'shared_loader_obj',
-                       'final_q', 'variable_manager']
+                        'final_q', 'variable_manager']
 
             # Signature 2: ansible-core 2.19-2.20
             sig_2_19 = ['self', 'host', 'task', 'job_vars', 'play_context', 'loader',
-                       'shared_loader_obj', 'final_q', 'variable_manager']
+                        'shared_loader_obj', 'final_q', 'variable_manager']
 
             # Signature 3: ansible-core 2.16-2.18
             sig_2_16 = ['self', 'host', 'task', 'job_vars', 'play_context', 'new_stdin',
-                       'loader', 'shared_loader_obj', 'final_q', 'variable_manager']
+                        'loader', 'shared_loader_obj', 'final_q', 'variable_manager']
 
             # Signature 4: ansible-core 2.9-2.15
             sig_2_9 = ['self', 'host', 'task', 'job_vars', 'play_context', 'new_stdin',
-                          'loader', 'shared_loader_obj', 'final_q']
+                       'loader', 'shared_loader_obj', 'final_q']
 
             task_context = None
 
