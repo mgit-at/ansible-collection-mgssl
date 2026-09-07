@@ -276,19 +276,45 @@ class ActionModule(ActionBase):
             sig = inspect.signature(TaskExecutor.__init__)
             params = list(sig.parameters.keys())
 
-            # Signature 1: ansible-core 2.19+
-            sig_new = ['self', 'host', 'task', 'job_vars', 'play_context', 'loader',
+            # Signature 1: ansible-core 2.21+
+            # `task` and `job_vars` moved out of the constructor into the TaskContext,
+            # and run() returns a UnifiedTaskResult instead of a plain result dict.
+            sig_2_21 = ['self', 'host', 'play_context', 'loader', 'shared_loader_obj',
+                       'final_q', 'variable_manager']
+
+            # Signature 2: ansible-core 2.19-2.20
+            sig_2_19 = ['self', 'host', 'task', 'job_vars', 'play_context', 'loader',
                        'shared_loader_obj', 'final_q', 'variable_manager']
 
-            # Signature 2: ansible-core 2.16-2.18
-            sig_old = ['self', 'host', 'task', 'job_vars', 'play_context', 'new_stdin',
+            # Signature 3: ansible-core 2.16-2.18
+            sig_2_16 = ['self', 'host', 'task', 'job_vars', 'play_context', 'new_stdin',
                        'loader', 'shared_loader_obj', 'final_q', 'variable_manager']
 
-            # Signature 3: ansible-core 2.9-2.15
-            sig_oldest = ['self', 'host', 'task', 'job_vars', 'play_context', 'new_stdin',
+            # Signature 4: ansible-core 2.9-2.15
+            sig_2_9 = ['self', 'host', 'task', 'job_vars', 'play_context', 'new_stdin',
                           'loader', 'shared_loader_obj', 'final_q']
 
-            if params == sig_new:
+            task_context = None
+
+            if params == sig_2_21:
+                # Import lazily, this module only exists on ansible-core 2.21+
+                from ansible._internal._task import TaskContext
+
+                task_context = TaskContext.create(
+                    task=task,
+                    task_vars=task_vars,
+                    host_name=host.name
+                )
+
+                executor_result = TaskExecutor(
+                    host,
+                    self._play_context,
+                    self._loader,
+                    self._shared_loader_obj,
+                    None,
+                    self._task.get_variable_manager()
+                )
+            elif params == sig_2_19:
                 executor_result = TaskExecutor(
                     host,
                     task,
@@ -299,7 +325,7 @@ class ActionModule(ActionBase):
                     None,
                     self._task.get_variable_manager()
                 )
-            elif params == sig_old:
+            elif params == sig_2_16:
                 executor_result = TaskExecutor(
                     host,
                     task,
@@ -311,7 +337,7 @@ class ActionModule(ActionBase):
                     None,
                     self._task.get_variable_manager()
                 )
-            elif params == sig_oldest:
+            elif params == sig_2_9:
                 executor_result = TaskExecutor(
                     host,
                     task,
@@ -324,7 +350,7 @@ class ActionModule(ActionBase):
                 )
             else:
                 raise AnsibleError(
-                    "Unsupported TaskExecutor signature. Expected one of three known signatures, "
+                    "Unsupported TaskExecutor signature. Expected one of four known signatures, "
                     "got: {0}. This may indicate an incompatible ansible-core version.".format(params)
                 )
 
@@ -347,7 +373,13 @@ class ActionModule(ActionBase):
 
                 executor_result._get_connection = get_connection
 
-            ret = executor_result.run()
+            if task_context is None:
+                ret = executor_result.run()
+            else:
+                # On ansible-core 2.21+ the executor pulls task and vars from the ambient
+                # context, and returns a UnifiedTaskResult instead of a result dict.
+                with task_context:
+                    ret = executor_result.run().as_result_dict()
 
             # Reset the close method
             if self._is_mitogen:

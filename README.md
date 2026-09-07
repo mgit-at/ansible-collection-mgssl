@@ -1,12 +1,13 @@
 # Ansible Collection - mgit_at.mgssl
 
-This plugin helps to generate server and client certificates from an existing CA in a secure manner. The CA Key is never exposed to the remote host. The generation of the certicates happen on the localhost.
+This plugin helps to generate server and client certificates from an existing CA in a secure manner. The CA key is never exposed to the remote host: the private key and the signing
+request are created on the target host, and only the signing itself happens on the CA host, which defaults to `127.0.0.1` (the control node) and can be changed with `ca_host`.
 
 The collection includes following plugins:
 
 - certificate
 
-For details of the usage please referre to [Example Usage](#example-usage)
+For details of the usage please refer to [Example Usage](#example-usage)
 
 ## Table of contents
 
@@ -40,7 +41,7 @@ Hint: Replace the version with the version you will need .
 
 ## Requirements
 
-### Version 2.0.0
+### Collection 2.x (current)
 
 The [Community Crypto Collection](https://galaxy.ansible.com/community/crypto) is needed to use this collection.
 
@@ -48,23 +49,49 @@ Installation:
 
     ansible-galaxy collection install community.crypto
 
-**Supported ansible-core versions: 2.16.x through 2.19.x (and newer)**
+**Supported ansible-core versions: 2.19.x, 2.20.x and 2.21.x**
 
-Note: ansible-core versions before 2.10.0 are not supported, as the usage of other collections is not working. Additionally versions between 2.10.0 and 2.15.x can work, but
-are deemed to old and not supported by this collection anymore.
+These are the three ansible-core releases that upstream still maintains. 2.18 reached its end of life in May 2026, 2.17 in November 2025 and 2.16 in July 2025. The collection
+tracks that window rather than defining its own: every push runs the sanity suite against all three, and the integration suite against each of them on two Python versions.
+When upstream drops a release, the next release of this collection drops it too.
+
+| ansible-core | Status                   | Control node Python |
+| ------------ | ------------------------ | ------------------- |
+| 2.21.x       | supported, tested in CI  | 3.12 - 3.14         |
+| 2.20.x       | supported, tested in CI  | 3.12 - 3.14         |
+| 2.19.x       | supported, tested in CI  | 3.11 - 3.13         |
+| 2.16 - 2.18  | untested, likely to work | 3.10 / 3.11 and up  |
+| 2.10 - 2.15  | not supported            | -                   |
+| < 2.10       | does not work            | -                   |
+
+Versions 2.16 to 2.18 are only *likely* to work: the plugin still carries the code paths they need and nothing has deliberately been broken for them, but they left the CI
+matrix when they went end of life, so regressions there will not be caught. Versions 2.10 to 2.15 are too old to be worth supporting, and anything before 2.10 cannot work
+at all because using other collections is not possible there.
+
+The reason support is tied this closely to the ansible-core version is that the certificate action plugin drives the certificate generation on the CA host by instantiating
+ansible-core's `TaskExecutor` directly. That is an internal API which has changed several times, so the plugin inspects its signature at runtime and picks the matching call:
+
+| ansible-core | What changed                                                                                                 |
+| ------------ | ------------------------------------------------------------------------------------------------------------ |
+| 2.21+        | `task` and `job_vars` moved into a `TaskContext`, and `run()` returns a `UnifiedTaskResult` instead of a dict |
+| 2.19 - 2.20  | `new_stdin` removed from the constructor                                                                     |
+| 2.16 - 2.18  | constructor still takes `new_stdin`                                                                          |
+| 2.9 - 2.15   | no `variable_manager` argument                                                                               |
+
+If an unknown signature is encountered, the plugin fails with an explicit error instead of silently misbehaving. A new ansible-core release can therefore require a new
+release of this collection even when nothing else changed.
 
 The below requirements are needed on the host that executes this module.
 
-- Python >= 3.11 (for control node with ansible-core >= 2.18)
-- Python >= 3.10 (for control node with ansible-core 2.16 to 2.18)
+- Python >= 3.12 (for control node with ansible-core 2.20 and 2.21)
+- Python >= 3.11 (for control node with ansible-core 2.19)
 - PyOpenSSL >= 0.15 or cryptography >= 1.6
 - OpenSSL binary in $PATH (only on CA Host)
 
-### Version 1.0.0
+### Collection 1.x (historical)
 
-This plugin is compatible with 2.8 <= ansible <= 2.9. In 2.8 the new openssl module was introducted, which is used by this role.
-
-**Ansible Version 2.10 is not compatible with this module yet. As there are many major changes in it**
+The 1.x series targeted Ansible 2.8 and 2.9, which is where the openssl modules this collection builds on were introduced. It predates the collection/`ansible-core` split and is no
+longer maintained — the 2.x series described above replaced it and supports every ansible-core release from 2.10 onwards. Use 1.x only if you are stuck on Ansible 2.9.
 
 ## Plugin Options
 
@@ -136,9 +163,15 @@ This section gives an overview off all the plugin options of mgit_at.mgssl.certi
         type: str
         default: RSA
 
+    private_key_curve:
+        description:
+            - Passed through to community.crypto.openssl_privatekey as 'curve'
+            - Only sent when set, and only relevant for elliptic curve key types
+        type: str
+
     cert_mode:
-        description: Remote certificate file mode
-        default: 0o600
+        description: Remote certificate file mode, also applied to ca_cert_path and fullchain_cert_path
+        default: 0o644
 
     private_key_mode:
         description: Private key file mode
@@ -174,7 +207,7 @@ This section gives an overview off all the plugin options of mgit_at.mgssl.certi
                 description: Allowed signature algorithms
                 type: list
                 default: [ sha256WithRSAEncryption, sha384WithRSAEncryption, sha512WithRSAEncryption,
-                         sha256WithECDSAEncryption, sha384WithECDSAEncryption, sha512WithECDSAEncryption ]
+                         ecdsa-with-SHA256, ecdsa-with-SHA384, ecdsa-with-SHA512 ]
             subject:
                 description: Enable/disable subject assertion
                 type: bool
@@ -239,10 +272,16 @@ This section gives an overview off all the plugin options of mgit_at.mgssl.certi
                 type: bool
                 default: True
 
+            remote_private_key:
+                description:
+                    - Enable/disable the check that the private key on the remote host belongs to the certificate
+                    - Verified by signing a nonce on the remote host and validating the signature against the certificate
+                type: bool
+                default: True
+
     profile:
         description: Select profile in profiles list
         type: str
-        required: true
         default: _default
 
     profiles:
@@ -285,7 +324,15 @@ This section gives an overview off all the plugin options of mgit_at.mgssl.certi
             san_critical:
                 description: Certificate san critical flag
                 type: bool
-        default: _default
+        default:
+            _default:
+                expiry: "+43800h"
+                valid_at: "+720h"
+                key_usage: []
+                key_usage_critical: False
+                extended_key_usage: []
+                extended_key_usage_critical: False
+                san_critical: False
 
     subject:
         description: Subject of certificate
@@ -466,12 +513,14 @@ To ignore expired certificates you can set the `assert` option:
 
 ### CA Config Example
 
-This file show an example CA config. Note that the CA Key is also included. To be secure encrypt the whole config or the key variable with vault.
+This is an example CA config, matching what `generate-ca.py` writes. Note that the CA key is included as well, so encrypt either the whole file or the `private_key` value
+with ansible-vault — `generate-ca.py --ansible-vault` does the former for you.
 
     ---
     certificate: |
       -----BEGIN CERTIFICATE-----
       -----END CERTIFICATE-----
+    valid_at: '+720h'
     profiles:
       client:
         expiry: +43800h
@@ -482,7 +531,7 @@ This file show an example CA config. Note that the CA Key is also included. To b
         key_usage_critical: True
         extended_key_usage:
         - clientAuth
-        extended_key_usage_critical: False
+        extended_key_usage_critical: True
         san_critical: False
       peer:
         expiry: +43800h
@@ -492,9 +541,9 @@ This file show an example CA config. Note that the CA Key is also included. To b
         - keyEncipherment
         key_usage_critical: True
         extended_key_usage:
-        - clientAuth
         - serverAuth
-        extended_key_usage_critical: False
+        - clientAuth
+        extended_key_usage_critical: True
         san_critical: False
       server:
         expiry: +43800h
@@ -505,7 +554,7 @@ This file show an example CA config. Note that the CA Key is also included. To b
         key_usage_critical: True
         extended_key_usage:
         - serverAuth
-        extended_key_usage_critical: False
+        extended_key_usage_critical: True
         san_critical: False
     private_key: |
       -----BEGIN RSA PRIVATE KEY-----
